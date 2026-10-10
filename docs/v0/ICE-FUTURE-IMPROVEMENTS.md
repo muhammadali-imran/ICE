@@ -1,13 +1,12 @@
 # ICE: Milestones and Future Improvements
 
 | | |
-
 |---|---|
 | **Document** | ICE-FUTURE-IMPROVEMENTS.md |
 | **Project** | ICE |
 | **Status** | Final |
 | **Date** | 2026-10-10 |
-| **Companions** | [ICE-V0-SPEC.md](ICE-V0-SPEC.md) (what ICE v0 is), [ICE-CPP23-TRACKER.md](ICE-CPP23-TRACKER.md) |
+| **Companions** | [ICE-V0-SPEC.md](ICE-V0-SPEC.md) |
 
 This document holds everything that is **not** part of the ICE v0 spec: the step-by-step milestones on the way to v0 and after it, the acceptance test for each, and the catalogue of improvements. Nothing after section 3 starts until ICE v0 is accepted.
 
@@ -40,7 +39,6 @@ Unless an acceptance test says otherwise:
 These are the build steps for ICE v0. The exit test for the last step is the full acceptance list in the spec (section 8).
 
 | Version | Content | Exit test |
-
 |---|---|---|
 | **v0.1** | Types, bitboard helpers, FEN parse and print | FEN round-trips on a set of positions |
 | **v0.2** | Knight, king, pawn tables, ray-loop sliders, pseudo-legal movegen, make/unmake, legality filter | **Perft matches spec section 8.1** at d1 to d5 for all six positions, and the mirrored Position 4 |
@@ -57,7 +55,6 @@ These are the build steps for ICE v0. The exit test for the last step is the ful
 Each milestone is a release tagged on GitHub. The "Pass" column is the acceptance test, and every milestone also needs the spec's perft values (section 8.1) and sanitizer run to still pass.
 
 | Release | Theme | Items | Pass |
-
 |---|---|---|---|
 | **ICE v1.0** | Solid and fast | E1, E2, E3, E4, E10, A1, A4, B9, B1, B6, B7, B5, B8 | Perft identical to v0. `bench` node count stable between builds. Nodes per second higher than ICE v0 on the same machine (recorded). Wins the standard match against ICE v0 |
 | **ICE v1.1** | Deeper search | A6, A2, A3, A7, A5, A8, A9, A11, A10 | Wins the standard match against v1.0. Tactical suite: solved count not lower than v1.0. No time forfeits in 100 games at a rapid control |
@@ -72,7 +69,6 @@ Suggested order inside a release follows the order of the items listed.
 ## 4. Tier A: Strength from search
 
 | # | Improvement | What it does | Effect | Effort | Depends on | Pass test |
-
 |---|---|---|---|---|---|---|
 | A1 | **Principal variation search (PVS)** | Searches the first move with a full window and the rest with a null window, re-searching only if needed | Medium | S | Good move ordering | Same best move at fixed depth, fewer nodes |
 | A2 | **Null-move pruning** | Gives the opponent a free move. If the position still fails high, prune. Skipped in check and in zugzwang-prone endgames | Large | S to M | TT, check detection | Wins the standard match. Mate and zugzwang test positions still solved |
@@ -89,7 +85,6 @@ Suggested order inside a release follows the order of the items listed.
 ## 5. Tier B: Speed
 
 | # | Improvement | What it does | Effect | Effort | Pass test |
-
 |---|---|---|---|---|---|
 | B1 | **Magic bitboards for rooks, bishops, queens** | Replaces ray loops with one multiply-shift lookup (spec section 7.2) | Large for nodes per second | M | Perft identical. Every table entry equals the ray-loop result for every blocker subset |
 | B2 | **Fancy magics with per-square table sizes**, or Black Magic | Smaller tables, better cache behaviour | Small | M | Perft identical. Compare nodes per second on your CPU |
@@ -104,7 +99,6 @@ Suggested order inside a release follows the order of the items listed.
 ## 6. Tier C: Evaluation
 
 | # | Improvement | What it does | Effect | Effort | Pass test |
-
 |---|---|---|---|---|---|
 | C1 | **Refined tapering** with tuned game-phase weights | Smoother transition between middlegame and endgame | Small to medium | S | Wins the standard match |
 | C2 | **Pawn hash table** | Caches pawn-structure scores, which change slowly | Small (speed) | S | Same eval with and without |
@@ -116,7 +110,6 @@ Suggested order inside a release follows the order of the items listed.
 ## 7. Tier D: Features
 
 | # | Improvement | What it does | Effort | Notes |
-
 |---|---|---|---|---|
 | D1 | **More UCI options**: `Threads`, `MultiPV`, `UCI_LimitStrength` and `UCI_Elo` (so *ICE* can be set to play at a chosen strength), `Ponder` | Makes ICE a better sparring partner for human play | S to M | A strength-limit option is useful for you as a learner |
 | D2 | **Multithreading (Lazy SMP)** | Several threads search the same tree and share the transposition table | L | Needs a thread-safe TT and breaks determinism (NFR2). Keep a single-thread mode for testing |
@@ -129,7 +122,6 @@ Suggested order inside a release follows the order of the items listed.
 ## 8. Tier E: Testing and tooling
 
 | # | Improvement | Purpose | Effort |
-
 |---|---|---|---|
 | E1 | **Continuous integration on GitHub** (GitHub Actions) building with GCC and Clang, debug (sanitizers) and release, running perft and unit tests on each push | Catch regressions early | S to M |
 | E2 | **Tactical test suites** (mate-in-N sets and "win a piece" positions) run by a script | Quick strength check between matches | S |
@@ -145,7 +137,6 @@ Suggested order inside a release follows the order of the items listed.
 ## 9. Tier F: Platform, language and integration
 
 | # | Item | Details | Effort |
-
 |---|---|---|---|
 | F1 | **Raise the compiler floor** to GCC 14 or newer | Unlocks deducing `this`, `std::print`, `std::generator`, `std::stacktrace` (tracker). Only if a feature actually helps | S |
 | F2 | **`std::expected` for errors** across FEN and UCI parsing | Cleaner error paths without exceptions. First find out why it failed on Clang 18 (tracker) | S |
@@ -169,7 +160,6 @@ At the end of each release:
 ## 11. Change log
 
 | Date | Change |
-
 |---|---|
 | 2026-10-09 | Draft 1: tiers A to F, gate, rules, roadmap |
 | 2026-10-10 | Milestones (v0.1 to v0.7) moved here from the spec. Post-v0 milestones with acceptance tests added. Items A11, E8, E9, E10 added. Windows and macOS, linting and profiling moved here from the spec. Final. |

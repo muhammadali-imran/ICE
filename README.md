@@ -6,8 +6,9 @@ A chess engine written in C++23. The goal is an engine that plays sound, tactica
 
 ## Documents
 
-| File | What it is |
+See [docs/setup.md](docs/setup.md) for requirements, build and test instructions, and current run commands.
 
+| File | What it is |
 |---|---|
 | [docs/v0/ICE-V0-SPEC.md](docs/ICE-V0-SPEC.md) | What ICE v0 is: goals, decisions, standards, requirements, acceptance tests |
 | [docs/v0/ICE-FUTURE-IMPROVEMENTS.md](docs/ICE-FUTURE-IMPROVEMENTS.md) | Milestones and everything planned after v0 |
@@ -61,7 +62,6 @@ Example: `build/release/ice perft 5` prints `nodes: 4865609`.
 ## Source layout
 
 | File | Purpose |
-
 |---|---|
 | `src/types.h` | Colors, pieces, squares, castling rights |
 | `src/bitboard.h` | Bitboard helpers (popcount, lowest set bit, shifts, masks) |

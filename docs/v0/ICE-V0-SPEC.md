@@ -1,7 +1,6 @@
 # ICE: Chess Engine Specification (ICE v0)
 
 | | |
-
 |---|---|
 | **Document** | ICE-V0-SPEC.md |
 | **Project** | ICE |
@@ -27,7 +26,6 @@ Build a chess engine in **C++23** that plays legal, tactically sound chess and i
 The human-rating target is approximate and cannot be measured directly, so we use proxies:
 
 | # | Proxy | Target for v0 |
-
 |---|---|---|
 | G1 | Correctness | Perft node counts match the reference values in section 8.1 exactly |
 | G2 | Reliability | Plays full games over UCI with no illegal moves, crashes, hangs or lost-on-time games |
@@ -48,7 +46,6 @@ Multithreading, opening books, endgame tablebases, pondering, neural-network eva
 Each row is a decision we have taken, and why.
 
 | ID | Decision | Rationale |
-
 |---|---|---|
 | D1 | **Language: C++** | You already write it. Native 64-bit integers suit bitboards, and there is no new language to learn alongside chess programming. Python is too slow for search, and JavaScript `BigInt` is slow. |
 | D2 | **Standard: C++23** | You asked for a newer standard than C++20. C++26 was finalized in March 2026 and GCC 16.1 supports most of it, but the stock compilers on Ubuntu 24.04 (GCC 13.3, Clang 18.1.3, as tested) reject `-std=c++26`, and its headline features (reflection, contracts, `std::execution`) do nothing for an engine. |
@@ -85,7 +82,6 @@ These are the rules we hold the code and the process to. They are proposals that
 ### 3.2 Code rules
 
 | Rule | Why |
-
 |---|---|
 | Use `std::uint64_t` for bitboards and `enum class` for `Color`, `PieceType`, `Square`. | Avoids implicit conversions. |
 | Never shift by an amount that can be 64 or more. Guard it or mask it. | Undefined behaviour. |
@@ -133,7 +129,6 @@ ICE/
 ### 4.1 Functional
 
 | ID | Requirement |
-
 |---|---|
 | FR1 | Parse and print positions in FEN. Round-trip must be exact. |
 | FR2 | Generate all legal moves, including castling, en passant, promotions (all four pieces) and check evasions. |
@@ -147,7 +142,6 @@ ICE/
 ### 4.2 Non-functional
 
 | ID | Requirement |
-
 |---|---|
 | NFR1 | **Correctness before speed.** Nothing is optimized until perft matches. |
 | NFR2 | **Deterministic** with a fixed depth and one thread: same position, same move. |
@@ -171,7 +165,6 @@ ICE/
 Versions below were checked on Ubuntu 24.04.5 LTS.
 
 | Layer | Choice | Minimum version | Notes |
-
 |---|---|---|---|
 | Language standard | C++23 (`-std=c++23`) | | CMake chooses the right flag per compiler. |
 | Compiler | GCC (`g++`) | 13 | Ubuntu 24.04 ships 13.3. Newer is fine, but only the baseline-safe subset is used. |
@@ -231,7 +224,6 @@ Sanitizer note: the GCC debug build with sanitizers worked. A Clang sanitizer bu
 ### 5.2 Development and test tools
 
 | Purpose | Tool | Notes |
-
 |---|---|---|
 | Unit tests | **Catch2 v3** (pinned to `v3.16.1`, the newest tag at the time of writing) | Needs C++14 or newer. v3 is a compiled library, not single-header. Fetched by CMake `FetchContent`. |
 | Sanitizers | AddressSanitizer, UBSan (`-fsanitize=address,undefined`) | Built into GCC and Clang. |
@@ -253,7 +245,6 @@ UCI (Universal Chess Interface) was designed by Rudolf Huber and Stefan Meyer-Ka
 The commands below are the v0 target. This list is from my working knowledge of UCI. Confirm details against the specification (section 11) while implementing.
 
 | Direction | Command | Purpose |
-
 |---|---|---|
 | GUI → engine | `uci` | Start UCI mode. Engine replies with `id name ICE`, `id author …`, option lines, and `uciok`. |
 | | `isready` | Engine replies `readyok` when ready. |
@@ -278,7 +269,6 @@ Design note: parse commands with `std::string_view` and `std::istringstream`. Th
 A bitboard is a `std::uint64_t` where bit *i* says "something is true of square *i*". One integer holds "all white pawns", "squares a knight attacks", or "squares anyone occupies".
 
 | Task | Operation |
-
 |---|---|
 | Set, clear, test a square | `bb \|= 1ULL << s`, `bb &= ~(1ULL << s)`, `(bb >> s) & 1` |
 | Population count | `std::popcount(bb)` |
@@ -321,7 +311,6 @@ Is this a "bit permutation"? Loosely. The multiply scatters the masked bits so t
 **Variants** (from the Chess Programming Wiki):
 
 | Variant | Idea | Size |
-
 |---|---|---|
 | Plain magic | Fixed table size per square (512 entries for bishops, 4096 for rooks) | about 2 MiB for rooks |
 | Fancy magic (Pradu Kannan) | Table size and shift matched to each square's bit count | about 800 KiB for rook and bishop combined |
@@ -375,7 +364,6 @@ Eval = S_material + S_position + S_king_safety + S_structure + S_mobility
 **Material** (`S_material`):
 
 | Piece | Centipawns | Note |
-
 |---|---|---|
 | Pawn | 100 | |
 | Knight | 320 | |
@@ -423,7 +411,6 @@ ICE v0 is accepted when every check below passes. Milestones along the way, and 
 From the Chess Programming Wiki "Perft Results" page. These are node counts of the legal-move tree from the FEN at the given depth. Matching them exactly is the single most valuable test (G1).
 
 | Position | FEN | d1 | d2 | d3 | d4 | d5 | d6 |
-
 |---|---|---|---|---|---|---|---|
 | Start | `rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1` | 20 | 400 | 8,902 | 197,281 | 4,865,609 | 119,060,324 |
 | Kiwipete | `r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1` | 48 | 2,039 | 97,862 | 4,085,603 | 193,690,690 | 8,031,647,685 |
@@ -437,7 +424,6 @@ Notes: the wiki lists Kiwipete without the move counters, and I appended `0 1`. 
 ### 8.2 Other acceptance checks
 
 | Check | Covers | How | Pass |
-
 |---|---|---|---|
 | FEN round-trip | FR1 | Parse and print the perft FENs plus extra edge cases (no castling rights, en passant square, move counters) | Output equals input |
 | Zobrist consistency | FR3 | After every make and unmake during perft and test games, compare the incremental key with one computed from scratch | Always equal |
@@ -455,7 +441,6 @@ Notes: the wiki lists Kiwipete without the move counters, and I appended `0 1`. 
 ## 9. Risks
 
 | Risk | Mitigation |
-
 |---|---|
 | Subtle movegen bugs (castling rights, en passant, promotion, pins) | Perft on all six positions, plus the mirrored Position 4 |
 | Undefined behaviour from bit shifts and type mixing | Sanitizers in every debug build; `-Wconversion` |
@@ -478,7 +463,6 @@ Notes: the wiki lists Kiwipete without the move counters, and I appended `0 1`. 
 "Opened" means I read the page while preparing this document. "Listed" means the link appears on a page I read, but I did not open it. "Not opened" means it comes from my own knowledge and should be checked before you rely on it.
 
 | Topic | Source | Status |
-
 |---|---|---|
 | Original rough plan (superseded by this document) | Project doc `chess engine idea.md` | Read |
 | Magic-bitboard article | Uploaded text file (Wikipedia-style article on magic bitboards, Kannan's method) | Read |
@@ -500,7 +484,6 @@ Notes: the wiki lists Kiwipete without the move counters, and I appended `0 1`. 
 ## 12. Change log
 
 | Date | Change |
-
 |---|---|
 | 2026-10-09 | Draft 1, written by Claude |
 | 2026-10-10 | Your edits reviewed and merged. Scope, platform (Ubuntu), project name (ICE) and GitHub added. Plan content (search, evaluation) moved into the document so the plan can be retired. Future items moved to ICE-FUTURE-IMPROVEMENTS.md. Table and cross-reference errors fixed. Final. |
