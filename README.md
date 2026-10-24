@@ -1,17 +1,33 @@
 # ICE
 
-A chess engine written in C++23. The goal is an engine that plays sound, tactical chess and can beat a 1500 to 2000 rated human in a rapid game.
+A chess engine written in C++23. The current implementation provides chess
+position handling, legal move generation, and perft tools. The longer-term
+goal is an engine that plays sound, tactical chess and can beat a 1500 to 2000
+rated human in a rapid game.
 
-**Status:** ICE v0 is in progress. Milestones v0.1 (types, bitboards, FEN) and v0.2 (attack tables, move generation, make/unmake, perft) are done. UCI, search and evaluation come next. See [docs/ICE-FUTURE-IMPROVEMENTS.md](docs/ICE-FUTURE-IMPROVEMENTS.md) for the milestone list.
+**Status:** FEN handling, move generation, make/unmake, and perft are
+implemented. UCI, search, and evaluation are not yet implemented. See the
+[roadmap](docs/ROADMAP.md) for planned milestones.
 
 ## Documents
 
-See [docs/setup.md](docs/setup.md) for requirements, build and test instructions, and current run commands.
+See [docs/SETUP.md](docs/SETUP.md) for requirements, build and test
+instructions, and current run commands.
 
 | File | What it is |
 |---|---|
-| [docs/v0/ICE-V0-SPEC.md](docs/ICE-V0-SPEC.md) | What ICE v0 is: goals, decisions, standards, requirements, acceptance tests |
-| [docs/v0/ICE-FUTURE-IMPROVEMENTS.md](docs/ICE-FUTURE-IMPROVEMENTS.md) | Milestones and everything planned after v0 |
+| [docs/SPEC.md](docs/SPEC.md) | Current behavior, constraints, and planned scope |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Components, runtime flow, and invariants |
+| [docs/ENGINE-DESIGN.md](docs/ENGINE-DESIGN.md) | Preserved target design for UCI, search, and evaluation |
+| [docs/STRUCTURE.md](docs/STRUCTURE.md) | Repository map |
+| [docs/TEST_CASES.md](docs/TEST_CASES.md) | Test coverage and perft references |
+| [docs/ROADMAP.md](docs/ROADMAP.md) | Planned milestones and improvements |
+
+Agent-only references live in [.agent/](.agent/): [AGENTS.md](.agent/AGENTS.md)
+defines agent workflows, [requirements.md](.agent/requirements.md) sets agent
+completion criteria, [future-improvements.md](.agent/future-improvements.md)
+indexes candidate follow-up work, and [changelog.md](.agent/changelog.md)
+records changes to agent guidance.
 
 ## Build and test
 
@@ -49,7 +65,7 @@ build/release/ice_tests "[.deep]"
 
 ## Developer commands
 
-Until the UCI loop exists (v0.3) the `ice` program only has these commands:
+The `ice` program currently has these commands:
 
 ```bash
 ice perft <depth> [fen]    count legal move sequences (default: start position)

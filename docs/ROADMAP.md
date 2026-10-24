@@ -1,14 +1,14 @@
-# ICE: Milestones and Future Improvements
+# ICE: Roadmap and Future Improvements
 
 | | |
 |---|---|
-| **Document** | ICE-FUTURE-IMPROVEMENTS.md |
+| **Document** | ROADMAP.md |
 | **Project** | ICE |
 | **Status** | Final |
 | **Date** | 2026-10-10 |
-| **Companions** | [ICE-V0-SPEC.md](ICE-V0-SPEC.md) |
+| **Companions** | [SPEC.md](SPEC.md) |
 
-This document holds everything that is **not** part of the ICE v0 spec: the step-by-step milestones on the way to v0 and after it, the acceptance test for each, and the catalogue of improvements. Nothing after section 3 starts until ICE v0 is accepted.
+This document records planned milestones and possible future improvements. Items here are proposals, not current implementation guarantees. See [SPEC.md](SPEC.md) for the current project scope and implemented behavior.
 
 ---
 
@@ -36,23 +36,23 @@ Unless an acceptance test says otherwise:
 
 ## 2. Milestones on the way to ICE v0
 
-These are the build steps for ICE v0. The exit test for the last step is the full acceptance list in the spec (section 8).
+These are the original build steps toward the first complete engine release. The exit tests are tracked in [TEST_CASES.md](TEST_CASES.md) and the relevant release plan below.
 
 | Version | Content | Exit test |
 |---|---|---|
 | **v0.1** | Types, bitboard helpers, FEN parse and print | FEN round-trips on a set of positions |
-| **v0.2** | Knight, king, pawn tables, ray-loop sliders, pseudo-legal movegen, make/unmake, legality filter | **Perft matches spec section 8.1** at d1 to d5 for all six positions, and the mirrored Position 4 |
+| **v0.2** | Knight, king, pawn tables, ray-loop sliders, pseudo-legal movegen, make/unmake, legality filter | **Perft matches [TEST_CASES.md](TEST_CASES.md)** at d1 to d5 for all six positions, and the mirrored Position 4 |
 | **v0.3** | UCI loop (`uci`, `isready`, `position`, `go depth`, `bestmove`), `perft` command | Cute Chess can load ICE and play it (first legal move is enough) |
 | **v0.4** | Evaluation (material, PST), negamax alpha-beta, quiescence, MVV-LVA, iterative deepening, time control, draw detection | Plays full games with no illegal moves or time losses. Finds mate in 1 to 3 on test positions |
 | **v0.5** | Zobrist hashing, transposition table, killers, history | Fewer nodes at the same depth than v0.4. Zobrist key after make/unmake equals the key recomputed from scratch |
 | **v0.6** | Fuller evaluation (pawn structure, king safety, mobility, bishop pair, tapering) | Wins the head-to-head match against v0.5 |
-| **v0.7** | Calibration against Stockfish and a human game | Spec section 8.2 passes in full. This is **ICE v0** |
+| **v0.7** | Calibration against Stockfish and a human game | The intended end-to-end acceptance checks pass. This is **ICE v0** |
 
 ---
 
 ## 3. Milestones after ICE v0
 
-Each milestone is a release tagged on GitHub. The "Pass" column is the acceptance test, and every milestone also needs the spec's perft values (section 8.1) and sanitizer run to still pass.
+Each milestone is a release tagged on GitHub. The "Pass" column is the acceptance test, and every milestone also needs the perft values in [TEST_CASES.md](TEST_CASES.md) and a sanitizer run to still pass.
 
 | Release | Theme | Items | Pass |
 |---|---|---|---|
@@ -86,7 +86,7 @@ Suggested order inside a release follows the order of the items listed.
 
 | # | Improvement | What it does | Effect | Effort | Pass test |
 |---|---|---|---|---|---|
-| B1 | **Magic bitboards for rooks, bishops, queens** | Replaces ray loops with one multiply-shift lookup (spec section 7.2) | Large for nodes per second | M | Perft identical. Every table entry equals the ray-loop result for every blocker subset |
+| B1 | **Magic bitboards for rooks, bishops, queens** | Replaces the current ray loops with one multiply-shift lookup | Large for nodes per second | M | Perft identical. Every table entry equals the ray-loop result for every blocker subset |
 | B2 | **Fancy magics with per-square table sizes**, or Black Magic | Smaller tables, better cache behaviour | Small | M | Perft identical. Compare nodes per second on your CPU |
 | B3 | **PEXT/BMI2 indexing** (hardware bit extract) | Replaces the multiply with one instruction where the CPU has BMI2 | Small to medium on supported CPUs | S | Switch at build time, perft identical. Note the portability cost |
 | B4 | **Pin and check masks, legal-by-construction movegen** | Removes make/unmake just to test legality | Medium | L | Perft identical. Compare against the filter version on all positions |
@@ -154,8 +154,8 @@ Suggested order inside a release follows the order of the items listed.
 At the end of each release:
 
 1. Update the strength ladder (E6) with the new release's results.
-2. Update the spec if a decision or requirement changed, and the tracker if we learned something about C++23.
-3. Decide whether the 1500 to 2000 target (goals G4 and G5 in the spec) is met. If it is, later releases become optional.
+2. Update [SPEC.md](SPEC.md) and [ARCHITECTURE.md](ARCHITECTURE.md) if a decision, requirement, or implementation changes.
+3. Decide whether the 1500 to 2000 target is met using the match results and human play checks. If it is, later releases become optional.
 
 ## 11. Change log
 
